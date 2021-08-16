@@ -10,9 +10,11 @@ Source1: glpi-httpd.conf
 Source2: glpi-logrotate
 Source3: glpi-downstream.php
 Source4: glpi-local_define.php
+Source5: glpi-cron
 Requires:       httpd
 Requires:	    php
-
+Requires:       %{_sysconfdir}/logrotate.d
+Requires:       crontabs
 
 BuildArch:      noarch
 
@@ -28,6 +30,7 @@ about your network-topology.
 mkdir %{name}-%{version}
 cd %{name}-%{version}
 tar xzvf %{SOURCE0}
+
 %build
 # Nothing to do!!
 
@@ -41,6 +44,11 @@ cp  %SOURCE4 %{buildroot}%{_sysconfdir}/%{name}/local_define.php
 mkdir -p %{buildroot}/usr/share/%{name}/inc
 cp  %SOURCE3 %{buildroot}/usr/share/glpi/inc/downstream.php
 
+# === cron ====
+mkdir -p %{buildroot}/%{_sysconfdir}/cron.d
+cp  %SOURCE5 %{buildroot}/%{_sysconfdir}/cron.d/%{name}
+
+
 # ===== files =====
 mkdir -p %{buildroot}/%{_localstatedir}/lib/%{name}
 mv %{name}-%{version}/%{name}/files %{buildroot}/%{_localstatedir}/lib/%{name}/files
@@ -49,6 +57,7 @@ mv %{name}-%{version}/%{name}/files %{buildroot}/%{_localstatedir}/lib/%{name}/f
 mkdir -p %{buildroot}%{_localstatedir}/log
 mv %{buildroot}/%{_localstatedir}/lib/%{name}/files/_log %{buildroot}%{_localstatedir}/log/%{name}
 
+# move all files to /usr/share/glpi
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}/%{name}/* %{buildroot}%{_datadir}/%{name}
 
@@ -72,7 +81,7 @@ find %{buildroot} -name remove.txt -exec rm -f {} \; -print
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/marketplace
 %ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/config_db.php
 %ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/local_define.php
-
+%config(noreplace) %{_sysconfdir}/cron.d/%{name}
 # This folder can contain private information (sessions, docs, ...)
 %dir %_localstatedir/lib/%{name}/files
 %attr(2770,root,apache) %{_localstatedir}/lib/%{name}/files
