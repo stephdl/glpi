@@ -41,8 +41,13 @@ cp  %SOURCE4 %{buildroot}%{_sysconfdir}/%{name}/local_define.php
 mkdir -p %{buildroot}/usr/share/%{name}/inc
 cp  %SOURCE3 %{buildroot}/usr/share/glpi/inc/downstream.php
 
-# Logs
-mkdir -p %{buildroot}/var/log/%{name}/
+# ===== files =====
+mkdir -p %{buildroot}/%{_localstatedir}/lib/%{name}
+mv %{name}-%{version}/%{name}/files %{buildroot}/%{_localstatedir}/lib/%{name}/files
+
+# ===== log =====
+mkdir -p %{buildroot}%{_localstatedir}/log
+mv %{buildroot}/%{_localstatedir}/lib/%{name}/files/_log %{buildroot}%{_localstatedir}/log/%{name}
 
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -r %{name}-%{version}/%{name}/* %{buildroot}%{_datadir}/%{name}
@@ -55,15 +60,23 @@ mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 cp -pr %SOURCE2 %{buildroot}%{_sysconfdir}/logrotate.d/glpi
 
 
+# clean up
+find %{buildroot} -name remove.txt -exec rm -f {} \; -print
+
 %files
 %{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/glpi
-%dir %attr(0750,apache,apache) %{_datadir}/%{name}/files
 %attr(0750,root,root) %{_sysconfdir}/%{name}/local_define.php
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/config
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/marketplace
-%dir %attr(0750,apache,apache) /var/log/%{name}
+%ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/config_db.php
+%ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/local_define.php
+
+# This folder can contain private information (sessions, docs, ...)
+%dir %_localstatedir/lib/%{name}/files
+%attr(2770,root,apache) %{_localstatedir}/lib/%{name}/files
+%attr(2770,root,apache) %dir %{_localstatedir}/log/%{name}
 
 %post
 
