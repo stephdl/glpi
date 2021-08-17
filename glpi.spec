@@ -37,8 +37,8 @@ tar xzvf %{SOURCE0}
 %install
 
 # set specific settings
-mkdir -p %{buildroot}/etc/%{name}
-cp  %SOURCE4 %{buildroot}%{_sysconfdir}/%{name}/local_define.php
+mkdir -p %{buildroot}/etc/glpi
+cp  %SOURCE4 %{buildroot}/etc/glpi/local_define.php
 
 # configuration file path
 mkdir -p %{buildroot}/usr/share/%{name}/inc
@@ -76,11 +76,10 @@ find %{buildroot} -name remove.txt -exec rm -f {} \; -print
 %{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/glpi
-%attr(0750,root,root) %{_sysconfdir}/%{name}/local_define.php
+%config(noreplace) %{_sysconfdir}/%{name}/local_define.php
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/config
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/marketplace
 %ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/config_db.php
-%ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/local_define.php
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 # This folder can contain private information (sessions, docs, ...)
 %dir %_localstatedir/lib/%{name}/files
