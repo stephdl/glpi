@@ -51,11 +51,11 @@ cp  %SOURCE5 %{buildroot}/%{_sysconfdir}/cron.d/%{name}
 
 # ===== files =====
 mkdir -p %{buildroot}/%{_localstatedir}/lib/%{name}
-mv %{name}-%{version}/%{name}/files %{buildroot}/%{_localstatedir}/lib/%{name}/files
+mv %{name}-%{version}/%{name}/files/* %{buildroot}/%{_localstatedir}/lib/%{name}
 
 # ===== log =====
 mkdir -p %{buildroot}%{_localstatedir}/log
-mv %{buildroot}/%{_localstatedir}/lib/%{name}/files/_log %{buildroot}%{_localstatedir}/log/%{name}
+mv %{buildroot}/%{_localstatedir}/lib/%{name}/_log %{buildroot}%{_localstatedir}/log/%{name}
 
 # move all files to /usr/share/glpi
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
@@ -82,8 +82,8 @@ find %{buildroot} -name remove.txt -exec rm -f {} \; -print
 %ghost %config(noreplace,missingok) %{_sysconfdir}/%{name}/config_db.php
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 # This folder can contain private information (sessions, docs, ...)
-%dir %_localstatedir/lib/%{name}/files
-%attr(2770,root,apache) %{_localstatedir}/lib/%{name}/files
+%dir %_localstatedir/lib/%{name}
+%attr(2770,root,apache) %{_localstatedir}/lib/%{name}
 %attr(2770,root,apache) %dir %{_localstatedir}/log/%{name}
 
 %post
