@@ -76,6 +76,7 @@ find %{buildroot} -name remove.txt -exec rm -f {} \; -print
 %{_datadir}/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/glpi
+%dir %attr(2770,apache,apache) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/%{name}/local_define.php
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/config
 %dir %attr(0750,apache,apache) %{_datadir}/%{name}/marketplace
@@ -83,8 +84,8 @@ find %{buildroot} -name remove.txt -exec rm -f {} \; -print
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
 # This folder can contain private information (sessions, docs, ...)
 %dir %_localstatedir/lib/%{name}
-%attr(2770,root,apache) %{_localstatedir}/lib/%{name}
-%attr(2770,root,apache) %dir %{_localstatedir}/log/%{name}
+%attr(2770,apache,apache) %{_localstatedir}/lib/%{name}
+%attr(2770,apache,apache) %dir %{_localstatedir}/log/%{name}
 
 %post
 
